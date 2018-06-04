@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="allh" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
+    <link rel="stylesheet" href="/static/web/bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="/static/web/css/index.css" >
+    <script src="/static/web/bootstrap-3.3.7-dist/js/bootstrap.min.js" ></script>
+    <script src="/static/web/js/result.js"></script>
+    <script src="/static/web/js/aistatus.js"></script>
+    <script src="/static/web/js/flv.min.js"></script>
+    <script src="/static/web/js/bootstrap-paginator.js"></script>
+    <script src="/static/web/js/index.js"></script>
+    <title>世界杯AI自动剪辑系统</title>
+</head>
+<body class="allh">
+   <div class="container allh">
+        <div class="ai_name"><h3>AI自动剪辑管理系统</h3></div>
+        <div class="row allh">
+            <div class="col-sm-2 allh">
+                 <!-- Nav tabs -->
+                <ul class="nav nav-pills nav-stacked">
+                    <!-- <li role="presentation" class="active"><a href="#set" role="pill" data-toggle="pill">基础配置</a></li> -->
+                    <li role="presentation"><a href="#tasks" role="pill" data-toggle="pill">剪辑任务管理</a></li>
+                    <li role="presentation"><a href="#results" role="pill" data-toggle="pill">剪辑结果管理</a></li>
+                    <li role="presentation"><a href="#status" role="pill" data-toggle="pill">AI资源池管理</a></li>
+                  </ul>
+            </div>
+            <div class="col-sm-10 allh">
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                 
+                    <div role="tabpanel" class="tab-pane" id="tasks">
+                        <!-- <h4 class="title">任务列表</h4> -->
+                        <div style="width:95%;margin:0 30px;overflow: hidden;">
+                            <div class="btn-group col-md-8 cliptype rule_classify" role="group">
+                                    <button type="button" name="all" class="rule_choose_all btn btn-default active">全部</button>
+                                    <button type="button" name="running" class="rule_choose_running btn btn-default">剪辑中</button>
+                                    <button type="button" name="waiting" class="rule_choose_waiting btn btn-default">等待</button>
+                                    <button type="button" name="free,done" class="rule_choose_free btn btn-default">闲置</button>
+                            </div>
+                            <div class="add_rule btn-group" style="float:right">
+                                <button type="button" class="btn btn-success addtask"><span class="glyphicon glyphicon-plus"></span>新增任务</button>
+                            </div>
+                        </div> 
+                        <!-- modal baseset for task -->
+                        <div class="modal addmediaconfig" tabindex="-1" role="dialog" >
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">2018世界杯</h4>
+                                    </div>
+                                    <div class="config_load">
+                                        <div class="baseset">
+
+                                        </div>
+                                        <div class="xyset">
+
+                                        </div>
+                                        <label>优先级</label>
+                                        <div class="input-group spinner">  
+                                            <input type="text"  name="priority" class="form-control" value="0" readonly="readonly">  
+                                            <div class="input-group-btn-vertical">  
+                                            <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>  
+                                            <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-down"></i></button>  
+                                            </div> 
+                                        </div>
+                                        <button type="button" id="addtask" class="btn btn-primary btn-lg btn-block">确认并提交</button>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div> 
+         
+                        <!-- modal baseset for task -->
+                        <div class="checkbox" id="check_delete_btn">
+                            <button type="button" class="deletetask btn btn-danger"><span class="glyphicon glyphicon-trash"></span> 删除选中任务</button>  
+                        </div> 
+                        <table class="table table-hover table-striped" style="width:95%; margin:0 30px;">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="check_all_box"></th>
+                                    <th>序号</th>
+				    <th>媒资id</th>
+                                    <th>任务名</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                    <th>优先级</th>
+                                    <th>查看剪辑结果</th>
+                                    <th>观看视频</th>
+                                </tr>
+                            </thead>
+                            <tbody id="result_list">
+                               
+                            </tbody>
+                        </table>
+           
+                   
+                </div>
+                    <!-- play video -->
+                        <div class="modal flvplayer" tabindex="-1" role="dialog" >
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">世界杯</h4>
+                                    </div>
+                                    <div class="videoplayer">
+                                        <video  width="80%" id="videoElement" poster="/static/web/timg.jpeg" controls ></video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    <!-- result detail & edit result -->
+                    <div role="tabpanel" class="tab-pane" id="results">
+                        
+                            <ul class="nav nav-pills labels" role="tablist">
+                                <li role="presentation" class="active" name="all"><a href="#">全部</a></li>
+                                <li role="presentation" name="corner"><a href="#">角球</a></li>
+                                <li role="presentation" name="penalty"><a href="#">点球</a></li>
+                                <li role="presentation" name="goal"><a href="#">进球</a></li>
+                                <li role="presentation" name="red"><a href="#">红牌</a></li>
+                                <li role="presentation" name="yellow"><a href="#">黄牌</a></li>
+                                <li role="presentation" name="shot"><a href="#">射门</a></li>
+                                <li role="presentation" name="celebrate"><a href="#">庆祝</a></li>
+                                <li role="presentation" name="replay"><a href="#">回放</a></li>
+                                <li role="presentation">
+                                    <!-- <label for="id_select">Test label YEag</label>   -->
+                                    <select id="id_select" class="selectpicker bla bla bli"  data-live-search="true">  
+                                        <option selected>全部球星</option>  
+                                        <option>bull</option>  
+                                        <option>ox</option>  
+                                        <option>ASD</option>  
+                                        <option>Bla</option>  
+                                        <option>Ble</option>  
+                                    </select>  
+                                </li>
+                            </ul>
+ 
+                            <div class="row resultlist">
+                                
+                            </div>
+                                                   <!-- Large modal -->
+                        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Large modal</button> -->
+                        <div class="modal player" tabindex="-1" role="dialog" >
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">2018世界杯</h4>
+                                        </div>
+                                        <video class="clipvideo" src="#" width="100%" height="auto" controls preload="metadata"></video>
+                                        <input type="hidden" name="sequence">
+                                        <input type="hidden" name="mediafilelist">
+                                        <input type="hidden" name="cduration">
+                                        <input type="hidden" name="displayfilelist">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon2">标签名</span>
+                                            <input type="text" name="name" class="form-control" placeholder="请输入标签名" >
+                                            <span class="input-group-addon" id="basic-addon3">关键字</span>
+                                            <input type="text" name="keywords" class="form-control" value="世界杯,AI" placeholder="世界杯,AI(必须)" >
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon2">shortname</span>
+                                            <input type="text"  name="shortname" class="form-control" placeholder="请输入shortname" >
+                                            <!-- <span class="input-group-addon" id="basic-addon3">球星名字</span>
+                                            <input type="text" class="form-control" placeholder="请输入相关人员名字" > -->
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon2">其他信息</span>
+                                            <input type="text" name="description" class="form-control" placeholder="请输入其他信息" >
+                                        </div>
+                                        <button type="button" id="change_result" class="deploy btn btn-primary btn-lg btn-block">提交修改</button><br/>
+                                        <button type="button" id="delete_result" class="deploy btn btn-primary btn-lg btn-block">删除此条信息</button>
+
+                                    </div>
+                                </div>
+                            </div> 
+                            <ul id="paginator"></ul>
+                            <div class="deleteall"><div class="glyphicon glyphicon-ban-circle"></div>删除所有剪辑结果</div>
+                    </div>
+                    <!-- aiclip engine's status -->
+                    <div role="tabpanel" class="tab-pane" id="status">
+                        <div class="col-sm-12">
+                            <marquee direction="left" behavior="scroll" scrollamount="4" scrolldelay="2" loop="-1" width="95%" hspace="-10" vspace="-10">
+
+                            </marquee>   
+                        </div>
+                        <div style="width:95%;margin:0 auto;overflow: hidden;"> 
+                            <div class="add_rule btn-group" style="float:left">
+                                <button type="button" class="btn btn-primary addaipool"><span class="glyphicon glyphicon-plus"></span>新增资源池</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                                        选择资源池
+                                    </button>
+                            </div>
+                        </div>
+                        <!-- add aiconfig -->
+                        <div class="modal addaiconfig" tabindex="-1" role="dialog" >
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">2018世界杯</h4>
+                                    </div>
+                                    <div class="aiconfig">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">AI资源实例ID</span>
+                                            <input type="text" name="aiid" class="form-control" placeholder="请输入1-10000的整数！">
+                                        </div>
+                                        <p class="enginelist"></p>
+                                        <button type="button" id="addaipool" class="btn btn-primary btn-lg btn-block">确认并添加</button>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div> 
+                        <!-- add aiconfig -->
+                        <div class="enginestatus">
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">资源池列表</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <!-- <input type="checkbox" id="check_all_ai"> -->
+                                                        </th>
+                                                        <th>资源池id</th>
+                                                        <th>状态</th>
+                                                        <th>任务id</th>
+                                                        <th>删除操作</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="id_list">
+                                                    <tr style="text-align: center">
+                                                        <td><input type="checkbox" value="123" class="rule_id"></td>
+                                                        <td class="ai_id">id1</td>
+                                                        <td>status1</td>
+                                                        <td>taskid1</td>
+                                                        <td><span class="glyphicon glyphicon-remove del_ai" style="color:red;cursor: pointer"></span></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                                <button type="button" class="btn btn-primary aireq">确认</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                              
+                        </div>
+                        
+                        <table class="table table-hover table-bordered enginestatus" >
+                                <thead>
+                                <tr>
+                                    <th>引擎名称</th>
+                                    <th>引擎状态</th>
+                                    <th>已处理数据量</th>
+                                </tr>
+                                </thead>
+                                <tbody id="engine">
+                                    
+                                </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+   </div>
+</body>
+</html>

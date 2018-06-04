@@ -1,0 +1,291 @@
+.ai_name{
+    color:#fff;
+    text-align: center;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 5px rgba(0,0,0,.075); 
+}
+.btn-primary{
+    background: rgb(35, 120, 244);
+}
+.input-group-addon{
+    background: #edeff4;
+}
+.col-sm-2,.col-sm-10{
+    padding-top:10px;
+    border-top: 2px solid #7d7d7d;
+}
+.col-sm-2{
+    background: rgb(3, 16, 31);
+}
+.col-sm-2>.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover{
+    color:#fff;
+    background: rgb(35, 120, 244);
+}
+.col-sm-10{
+    overflow-y: scroll;
+    background:rgb(237, 239, 243);
+}
+.modal-dialog{
+    width:80%;
+}
+.viewresults,.playvideo{
+    cursor:pointer;
+}
+.control button{
+    display: inline-flex;
+}
+.input-group{
+    margin-bottom:10px;
+}
+.form-control{
+    background:rgb(237, 239, 243)
+}
+.container{
+    background:rgb(3, 16, 31);
+    width:100%;
+    text-align: center;
+}
+.allh{
+    height: 100%;
+}
+.row{
+    height: 100%;
+    margin-top: -56px;
+    padding-top: 66px;
+}
+/* .col-md-3{
+    background-color: #f8f8f8;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 5px rgba(0,0,0,.075); 
+} */
+.control{
+    width: 60%;
+    margin:10px auto;
+    display: flex;
+    justify-content:space-around;
+}
+.btn-group{
+    margin-bottom:10px;
+}
+label.btn{
+    text-align: left;
+}
+.labels{
+    margin:10px;
+}
+.caption{
+    display: flex;
+    justify-content: space-between;
+}
+.caption>p{
+    margin: 0px;
+    overflow: hidden;
+    width: 70%;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.glyphicon-play-circle{
+    vertical-align:bottom;
+}
+.btn-none{
+    border: none;
+    font-size:2em;
+    background-color: #fff;
+}
+#status{
+    padding: 10px;
+    box-shadow: 1px 1px 15px #888888;
+}
+#engine tr td{
+    width:33%;
+}
+.table th{
+    text-align:center;
+}
+.modal-content{
+    background: #edeff4;
+}
+.light_info{
+    padding:20px 0 10px;
+}
+.light_span{
+    display: inline-block;
+    width:1em;
+    height:1em;
+    border-radius:0.5em;
+    margin:0 1% 0 5%;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+}
+.sprun{
+    background-color: #5bb75b;
+    *background-color: #51a351;
+    background-image: -moz-linear-gradient(top,#62c462,#51a351);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#62c462),to(#51a351));
+    background-image: -webkit-linear-gradient(top,#62c462,#51a351);
+    background-image: -o-linear-gradient(top,#62c462,#51a351);
+    background-image: linear-gradient(to bottom,#62c462,#51a351);
+    background-repeat: repeat-x;
+    border-color: #51a351 #51a351 #387038;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+
+}
+.sperror{
+    background-color: #da4f49;
+    *background-color: #bd362f;
+    background-image: -moz-linear-gradient(top,#ee5f5b,#bd362f);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#ee5f5b),to(#bd362f));
+    background-image: -webkit-linear-gradient(top,#ee5f5b,#bd362f);
+    background-image: -o-linear-gradient(top,#ee5f5b,#bd362f);
+    background-image: linear-gradient(to bottom,#ee5f5b,#bd362f);
+    background-repeat: repeat-x;
+    border-color: #bd362f #bd362f #802420;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+
+}
+.spstop{
+    background-color: #bbb9b9;
+    *background-color: #656060;
+    background-image: -moz-linear-gradient(top,#bbb9b9,#656060);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#656060));
+    background-image: -webkit-linear-gradient(top,#bbb9b9,#656060);
+    background-image: -o-linear-gradient(top,#bbb9b9,#656060);
+    background-image: linear-gradient(to bottom,#bbb9b9,#656060);
+    background-repeat: repeat-x;
+    border: 1px solid #ccc;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+
+}
+.spclip{
+    background-color: #006dcc;
+    background-image: -moz-linear-gradient(top,#08c,#04c);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#08c),to(#04c));
+    background-image: -webkit-linear-gradient(top,#08c,#04c);
+    background-image: -o-linear-gradient(top,#08c,#04c);
+    background-image: linear-gradient(to bottom,#08c,#04c);
+    background-repeat: repeat-x;
+    border-color: #04c #04c #002a80;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+}
+.upstatus{
+    width:30px;
+    height:30px;
+    position:absolute;
+    top:-10px;
+    right:0;
+    line-height:30px;
+    vertical-align: middle;
+    border-radius:50%;
+    background-color: #4fce00;
+    color:rgb(18, 65, 0);
+}
+.deletethis{
+    width:30px;
+    height:30px;
+    position:absolute;
+    top:0;
+    left:15px;
+    line-height:30px;
+    vertical-align: middle;
+    border-radius:6px;
+    background-color: #ff0000;
+    color:#fff;
+    display: none;
+    cursor: pointer;
+}
+.deleteall{
+    position: fixed;
+    bottom: 10px;
+    right: 0;
+    background: #820000;
+    color: #fff;
+    width: 15%;
+    line-height: 30px;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 1em;
+    border-radius: 5px;
+}
+
+.thumbnail:hover .deletethis{
+    display: block;
+}
+@media (max-width: 768px){
+    .allh{
+        height:auto;
+    }
+}
+
+
+/* tasks--css */
+#check_delete_btn{
+    text-align: left;
+    width:95%;
+    margin:10px 30px 0;
+}
+#result_list td{
+    vertical-align: middle;
+}
+/* addtask */
+.config_load{
+    padding:10px;
+    text-align: left;
+}
+.addtask{
+    border-radius:5px;
+}
+.aiconfig{
+    padding: 20px;
+}
+.enginelist{
+    word-break: break-all;
+    word-wrap:break-word;
+}
+.enginestatus{
+    width:95%;
+    margin: 10px auto;
+    text-align: left;
+}
+.edittask{
+    color: #337ab7;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* priority */
+
+.spinner {  
+    width: 100px;  
+  }  
+  .spinner input {  
+    text-align: right;  
+  }  
+  .input-group-btn-vertical {  
+    position: relative;  
+    white-space: nowrap;  
+    width: 1%;  
+    vertical-align: middle;  
+    display: table-cell;  
+  }  
+  .input-group-btn-vertical > .btn {  
+    display: block;  
+    float: none;  
+    width: 100%;  
+    max-width: 100%;  
+    padding: 8px;  
+    margin-left: -1px;  
+    position: relative;  
+    border-radius: 0;  
+  }  
+  .input-group-btn-vertical > .btn:first-child {  
+    border-top-right-radius: 4px;  
+  }  
+  .input-group-btn-vertical > .btn:last-child {  
+    margin-top: -2px;  
+    border-bottom-right-radius: 4px;  
+  }  
+  .input-group-btn-vertical i{  
+    position: absolute;  
+    top: 0;  
+    left: 4px;  
+  }  
