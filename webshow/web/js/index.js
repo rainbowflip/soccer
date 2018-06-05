@@ -1,9 +1,10 @@
 $(document).ready(function(){
- 
+    let viewclick = 0;
     let tasklist = undefined; //save tasksinfo in it;
     let taskuptype = "add";
     let edittaskid = null;
     let aiid = 1;
+    let skiptaskid = "all";
     function deleteresult(sequence){
         try{
         if(confirm("确认删除？")){
@@ -11,17 +12,22 @@ $(document).ready(function(){
                 method:"GET",
             }).then((res)=>res.json())
             .then((res)=>{
-                    console.log(res["status"]);
+                    //console.log(res["status"]);
                     if(res["status"]=="OK"){
-                    fetch("/mediainfo/?keyword="+$(".labels li.active").attr("name"),
-                    {
-                        method:"GET",
+                    fetch("/mediainfo/",
+                    {   
+                        method:"POST",
+                        body:JSON.stringify({
+                            perpage:8,
+                            page:1,
+                            taskid:skiptaskid,
+                            keyword:$(".labels li.active").attr("name"),
+                        })
+
                     }).then((res)=>res.json())
                     .then((res)=>{
-                 
-                        jsonlist = res["mediainfo"].reverse();
-                        if(currentpage>Math.ceil(jsonlist.length/8)){currentpage = Math.ceil(jsonlist.length/8)};
                         
+                        jsonlist = res["mediainfo"];                        
                         showresult();
                         refreshbar(currentpage);
                     })
@@ -51,8 +57,8 @@ $(document).ready(function(){
         
         if (flvjs.isSupported()) {
             let videoElement = document.getElementById('videoElement');
-            console.log("issupported");
-            console.log(videoElement);
+            //console.log("issupported");
+            //console.log(videoElement);
             flvPlayer = flvjs.createPlayer({
                 type: 'flv',
                 isLive: true,
@@ -90,55 +96,95 @@ $(".labels li").click(function(){
     currentpage = 1;
     let key = $(".labels li.active").attr("name")
     let truekey = key==undefined?$(".labels li.active button").attr("title"):key;
-    fetch("/mediainfo/?keyword="+truekey,
+    fetch("/mediainfo/",
     {
-        method:"GET",
+        method:"POST",
+        body:JSON.stringify({
+            perpage:8,
+            page:1,
+            taskid:skiptaskid,
+            keyword:truekey,
+        })
     }).then((res)=>res.json())
     .then((res)=>{
-        jsonlist = res["mediainfo"].reverse();
-        refreshbar(currentpage);
-        showresult();
+        if(res["status"]=="OK"){
+            jsonlist = res["mediainfo"];
+            totalnumber = res["pages"];
+            //console.warn(totalnumber);
+            refreshbar(totalnumber);
+            showresult();
+        }else{
+            $(".resultlist").html(res["status"]);
+        }
+ 
     }).catch(e=>alert(e));
 
 })
     function showresult(){
         $(".resultlist").html("");
-        console.info(jsonlist[0])
-        let this_page_result = jsonlist.slice((currentpage-1)*8,currentpage*8<=jsonlist.length?currentpage*8:jsonlist.length);
-        for(let i of this_page_result){
+      if(jsonlist.length<1){
+          $(".resultlist").html("no results！");  
+      }
+        for(let i of jsonlist){
             let y = new Result(i);
             y.loadresult(currentpage);
         }
+      
     }
-    function getresults(e){
-        fetch("/mediainfo/?keyword="+$(".labels li.active").attr("name"),
+    function getallresults(a){
+	fetch("/mediainfo/",
             {
-                method:"GET",
-            }).then((res)=>res.json())
+                method:"POST",
+                body:JSON.stringify({
+                    perpage:8,
+                    page:currentpage,
+                    taskid:a,
+                    keyword:"all",
+                    })
+               }).then((res)=>res.json())
+            .then((res)=>{
+                if(res["status"]=="OK"){
+	            
+		    jsonlist = res["mediainfo"];
+                    showresult();
+                    refreshbar(res["pages"]);			
+		}else{
+                    $(".resultlist").html(res["status"]);
+                }
+	})}
+    function getresults(totalnumber){
+        fetch("/mediainfo/",
+            {
+                method:"POST",
+                body:JSON.stringify({
+                    perpage:8,
+                    page:currentpage,
+                    taskid:skiptaskid,
+                    keyword:$(".labels li.active").attr("name"),
+                    }) 
+               }).then((res)=>res.json())
             .then((res)=>{
             
                 if(res["status"]=="OK"){
-                    if(jsonlist.length!=res["mediainfo"].length){
-                        jsonlist = res["mediainfo"].reverse();
-                        if(e>Math.ceil(jsonlist.length/8)){e = Math.ceil(jsonlist.length/8)};
+                    if(jsonlist[0][0]!=res["mediainfo"][0][0]){
+		        jsonlist = res["mediainfo"];
                         showresult();
-                        refreshbar(e);
+                        refreshbar(res["pages"]);
                     }
                 }else{
           	        alert(res["status"]);
                     return;
                 }
-            }).catch(e=>alert("jserror"+e));
+            }).catch(e=>$(".resultlist"));
     }
-    function refreshbar(e){
-        console.warn("refreshbar"+e);
+    function refreshbar(totalnumber){
         let len = jsonlist.length;
 
         let options={
             bootstrapMajorVersion:3,    //版本
             currentPage:currentpage,    //当前页数
             numberOfPages:10,    //最多显示Page页
-            totalPages:Math.ceil(len/8),    //所有数据可以显示的页数
+            totalPages:totalnumber,    //所有数据可以显示的页数
             itemTexts: function (type, page, current) { //按钮
             switch (type) {
                 case "first":
@@ -154,11 +200,10 @@ $(".labels li").click(function(){
                 }
             },
             onPageClicked:function(event,originalEvent,type,page){
-                console.warn("e == page"+e+"+++"+page+"currnt---"+currentpage)
                 if(currentpage!=page){
                     currentpage = page;
-                    console.log("click+page",currentpage)
-                    showresult();
+                    //console.log("click index  page",currentpage)
+                    getresults(totalnumber);
                 }
             }
         }
@@ -221,7 +266,7 @@ let getAistatusInterval,statuslist={},errorstatus=undefined;
                             alert(res["msg"])
                         }
                         getRuleList(res["tasks"]);
-			console.warn(tasklist)
+			//console.warn(tasklist)
                     },
                     error:function(e){
                         console.log(e);
@@ -229,20 +274,36 @@ let getAistatusInterval,statuslist={},errorstatus=undefined;
                 })
                 break;
             case $('a[href="#results"]')[0]:
-            if(flvPlayer!=undefined){flvPlayer.pause()};
+                    if(!viewclick){
+                        skiptaskid = "all";
+                        currentpage = 1;
+                    }else{
+                        viewclick = 0;
+                    } 
+                $("#show_aiid").text(skiptaskid=="all"?"所有任务":skiptaskid);
+                if(flvPlayer!=undefined){flvPlayer.pause()};
                 if(getResultInterval!=undefined){
-                    return;
+		   
+                    getallresults(skiptaskid);
+                    //return;
                 }else{
                         let key = $(".labels li.active").attr("name")
                         let truekey = key==undefined?$(".labels li.active button").attr("title"):key;
-                        fetch("/mediainfo/?keyword="+truekey,
+                        fetch("/mediainfo/",
                         {
-                            method:"GET",
+                            method:"POST",
+                            body:JSON.stringify({
+                                perpage:8,
+                                page:currentpage,
+                                taskid:skiptaskid,
+                                keyword:truekey,
+                            })
                         }).then((res)=>res.json())
                         .then((res)=>{
                                 
                             if(res["status"]=="OK"){
-                                jsonlist = res["mediainfo"].reverse();
+                                jsonlist = res["mediainfo"];
+                                totalnumber = res["pages"];
                                 console.log("json change value");
                             }else{
                                 alert("请联系管理员！"+res["status"]);
@@ -252,13 +313,17 @@ let getAistatusInterval,statuslist={},errorstatus=undefined;
                                 if(jsonlist!=[]){
                                     showresult();
                                 }
-                                refreshbar(currentpage);
+                                refreshbar(totalnumber);
                                 getResultInterval = setInterval(function(){
-                                    getresults(currentpage);
+                                    
+                                    getresults(totalnumber);
                                                                         
                                 },5000);
                             }
-                        }).catch(e=>alert(e));                         
+                        }).catch(e=>{
+                            $(".resultlist").html("get clip results error");
+                            console.warn(e);
+                        });                         
                     }
                 
                 break;
@@ -647,10 +712,12 @@ function getRuleList(tasks){
             }
         })
     })
-    //点击产看结果按钮
+    //点击查看结果按钮
     $(document).on('click','.viewresults',function(){
+        skiptaskid = $(this).siblings(".edittask").text();
+console.info("-9-9-9-9-"+skiptaskid)
+        viewclick = 1;
         $("a[href='#results']").click();
-        alert("尚未关联任务！")
 
     })
     //点击播放视频安努
@@ -727,8 +794,10 @@ function getRuleList(tasks){
         })
         $(".aireq").click(function(){
             aiid = $("input[type='radio']:checked").parent().siblings(".ai_id").text();
+            $("#choose_aiid").text(aiid);
             get_aistatus(aiid);
             $("#myModal .close").click();
         })
     
 });
+

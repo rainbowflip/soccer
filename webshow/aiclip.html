@@ -119,7 +119,7 @@
                         </div> 
                     <!-- result detail & edit result -->
                     <div role="tabpanel" class="tab-pane" id="results">
-                        
+                       <div style="font-size:1em;">当前展示的剪辑结果来自任务：<span id="show_aiid">所有任务</span></div> 
                             <ul class="nav nav-pills labels" role="tablist">
                                 <li role="presentation" class="active" name="all"><a href="#">全部</a></li>
                                 <li role="presentation" name="corner"><a href="#">角球</a></li>
@@ -130,8 +130,8 @@
                                 <li role="presentation" name="shot"><a href="#">射门</a></li>
                                 <li role="presentation" name="celebrate"><a href="#">庆祝</a></li>
                                 <li role="presentation" name="replay"><a href="#">回放</a></li>
-                                <li role="presentation">
-                                    <!-- <label for="id_select">Test label YEag</label>   -->
+                                <!--<li role="presentation">
+                                    <label for="id_select">Test label YEag</label>   
                                     <select id="id_select" class="selectpicker bla bla bli"  data-live-search="true">  
                                         <option selected>全部球星</option>  
                                         <option>bull</option>  
@@ -140,7 +140,7 @@
                                         <option>Bla</option>  
                                         <option>Ble</option>  
                                     </select>  
-                                </li>
+                                </li>-->
                             </ul>
  
                             <div class="row resultlist">
@@ -188,12 +188,11 @@
                     <!-- aiclip engine's status -->
                     <div role="tabpanel" class="tab-pane" id="status">
                         <div class="col-sm-12">
-                            <marquee direction="left" behavior="scroll" scrollamount="4" scrolldelay="2" loop="-1" width="95%" hspace="-10" vspace="-10">
-
-                            </marquee>   
+                            
                         </div>
-                        <div style="width:95%;margin:0 auto;overflow: hidden;"> 
-                            <div class="add_rule btn-group" style="float:left">
+                        <div style="width:95%;margin:0 auto;overflow: hidden;">
+                            <div style='float: left;font-weight:bold;font-size:1.5em'>AI资源池<span id="choose_aiid">1</span></div> 
+                            <div class="add_rule btn-group" style="float:right">
                                 <button type="button" class="btn btn-primary addaipool"><span class="glyphicon glyphicon-plus"></span>新增资源池</button>
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                                         选择资源池

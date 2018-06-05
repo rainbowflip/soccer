@@ -39,17 +39,21 @@ class Result{
                 .then((res)=>{
                         console.log(res["status"]);
                         if(res["status"]=="OK"){
-                        fetch("/mediainfo/?keyword="+$(".labels li.active").attr("name"),
-                        {
-                            method:"GET",
-                        }).then((res)=>res.json())
-                        .then((res)=>{
-                            let jsonlist = res["mediainfo"].reverse();
-                            if(currentpage>Math.ceil(jsonlist.length/8)){currentpage = Math.ceil(jsonlist.length/8)};
+                           fetch("/mediainfo/",
+                             {
+                            method:"POST",
+                           body:JSON.stringify({
+                              perpage:8,
+                             page:currentpage,
+                             taskid:skip_taskid,
+                            keyword:$(".labels li.active").attr("name"),
+                          }) 
+                          }).then((res)=>res.json())
+                         .then((res)=>{
+                            let jsonlist = res["mediainfo"];
                             
                             $(".resultlist").html("");
-                            let this_page_result = jsonlist.slice((currentpage-1)*8,currentpage*8<=jsonlist.length?currentpage*8:jsonlist.length);
-                            for(let i of this_page_result){
+                            for(let i of jsonlist){
                                 let y = new Result(i);
                                 console.info(currentpage+"=====")
                                 y.loadresult(currentpage);
@@ -61,7 +65,7 @@ class Result{
                                 bootstrapMajorVersion:3,    //版本
                                 currentPage:currentpage,    //当前页数
                                 numberOfPages:10,    //最多显示Page页
-                                totalPages:Math.ceil(len/8),    //所有数据可以显示的页数
+                                totalPages:res["pages"],    //所有数据可以显示的页数
                                 itemTexts: function (type, page, current) { //按钮
                                 switch (type) {
                                     case "first":
@@ -76,11 +80,11 @@ class Result{
                                         return page;
                                     }
                                 },
-                                onPageClicked:function(e,originalEvent,type,page){
-                                    if(e!=page){
+                                onPageClicked:function(event,originalEvent,type,page){
+                                    if(currentpage!=page){
                                         currentpage = page;
                                         console.log("click+page",currentpage)
-                                        showresult();
+                                        getresults(res["pages"]);
                                     }
                                 }
                             }
@@ -145,3 +149,4 @@ class Result{
 }
 
 void Result;
+

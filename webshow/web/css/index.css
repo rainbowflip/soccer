@@ -288,4 +288,11 @@ label.btn{
     position: absolute;  
     top: 0;  
     left: 4px;  
-  }  
+  } 
+  #paginator a{
+    cursor:pointer	
+  } 
+  #show_aiid{
+    font-weight:bold;
+    font-size:1em
+  }
