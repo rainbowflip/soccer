@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="allh" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>    
+    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
+    <link rel="stylesheet" href="/static/web/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/web/css/index.css">
+    <link rel="stylesheet" href="/static/web/css/bootstrap-select.min.css">
+    <script src="/static/web/js/bootstrap-select.min.js"></script>
+    <script src="/static/web/bootstrap-3.3.7-dist/js/bootstrap.min.js" ></script>
+    <script src="/static/web/js/result.js"></script>
+    <script src="/static/web/js/aistatus.js"></script>
+    <script src="/static/web/js/flv.min.js"></script>
+    <script src="/static/web/js/bootstrap-paginator.js"></script>
+    <script src="/static/web/js/starclip.js"></script>
+    <script src="/static/web/js/index.js"></script>
+    <title>世界杯AI自动剪辑系统</title>
+</head>
+<body class="allh">
+   <div class="container allh">
+        <div class="ai_name"><h3>AI自动剪辑管理系统</h3></div>
+        <div class="row allh">
+            <div class="col-sm-2 allh">
+                 <!-- Nav tabs -->
+                <ul class="nav nav-pills nav-stacked">
+                    <!-- <li role="presentation" class="active"><a href="#set" role="pill" data-toggle="pill">基础配置</a></li> -->
+                    <li role="presentation"><a href="#tasks" role="pill" data-toggle="pill">剪辑任务管理</a></li>
+                    <li role="presentation"><a href="#results" role="pill" data-toggle="pill">剪辑结果管理</a></li>
+                    <li role="presentation"><a href="#status" role="pill" data-toggle="pill">AI资源池管理</a></li>
+                  </ul>
+            </div>
+            <div class="col-sm-10 allh">
+                <div role="tabpanel" class="tab-pane" id="starclip">
+                         <ul class="nav nav-pills starclip" role="tablist">
+                             <li role="presentation" class="active" name="all">
+                                 <label for="scenes">选择场景</label>   
+                                 <select id="scenes" class="selectpicker bla bla bli"  data-live-search="true">  
+                                     <option selected>全部场景</option>  
+                                     <option>角球</option>  
+                                     <option>点球</option>  
+                                     <option>进球</option>  
+                                     <option>红牌</option>  
+                                     <option>黄牌</option>  
+                                     <option>射门</option>  
+                                     <option>庆祝</option>
+                                     <option>回放</option>    
+                                 </select>  
+                            </li>
+                             <li role="presentation">
+                                 <label for="stars">选择球星</label>   
+                                 <select id="stars" class="selectpicker bla bla bli"  data-live-search="true">  
+                                     <option selected>全部球星</option>  
+                               
+                                 </select>  
+                             </li>
+                             <li role="presentation">
+                                <a id="querystar" style="padding:10px 15px;cursor:pointer">搜索</a>
+                             </li>
+                         </ul>
+
+                         <div class="row resultlist">
+                             
+                         </div>
+                                                <!-- Large modal -->
+                     <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Large modal</button> -->
+                     <div class="modal player" tabindex="-1" role="dialog" >
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">2018世界杯</h4>
+                                </div>
+                                <video class="clipvideo" src="#" width="100%" height="auto" controls preload="metadata"></video>
+                                <input type="hidden" name="sequence">
+                                <input type="hidden" name="mediafilelist">
+                                <input type="hidden" name="cduration">
+                                <input type="hidden" name="displayfilelist">
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic-addon2">标题</span>
+                                    <input type="text" name="name" class="form-control" placeholder="请输入标签名" >
+                                    <span class="input-group-addon" id="basic-addon3">关键字</span>
+                                    <input type="text" name="keywords" class="form-control" value="世界杯,AI" placeholder="世界杯,AI(必须)" >
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic-addon2">shortname</span>
+                                    <input type="text"  name="shortname" class="form-control" placeholder="请输入shortname" >
+                                    <!-- <span class="input-group-addon" id="basic-addon3">球星名字</span>
+                                    <input type="text" class="form-control" placeholder="请输入相关人员名字" > -->
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic-addon2">其他信息</span>
+                                    <input type="text" name="description" class="form-control" placeholder="请输入其他信息" >
+                                </div>
+                                <button type="button" id="change_result" class="deploy btn btn-primary btn-lg btn-block">提交修改</button><br/>
+                                <button type="button" id="delete_result" class="deploy btn btn-primary btn-lg btn-block">删除此条信息</button>
+
+                            </div>
+                        </div>
+                    </div> 
+                    <ul id="paginator"></ul>
+                    <div class="deleteall"><div class="glyphicon glyphicon-ban-circle"></div>删除所有剪辑结果</div>
+                 </div>
+            </div>
+   </div>
+</body>
+</html>
+

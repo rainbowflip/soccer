@@ -1,0 +1,301 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>未使用setCustomValidity()方法</title>
+</head>
+<body>
+    <script type="text/javascript">
+        var result = document.getElementById("result");
+        var file = document.getElementById("file");
+    
+        //判断浏览器是否支持FileReader接口  
+        if(typeof FileReader == 'undefined')  {
+            result.InnerHTML = "<p>你的浏览器不支持FileReader接口！</p>";
+            //使选择控件不可操作  
+            file.setAttribute("disabled", "disabled"); //使得之前操作失效，重新启动
+        }
+    
+        function readAsDataURL() {
+            //检验是否为图像文件  
+            var file = document.getElementById("file").files[0];
+            if(!/image\/\w+/.test(file.type)) {
+                alert("这不是图片文件！请检查！");
+                return false;
+            }
+            var reader = new FileReader();
+            //将文件以Data URL形式读入页面  
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                var result = document.getElementById("result");
+                //显示文件  
+                result.innerHTML = '<img src="' + this.result + '"  width="100%" alt=""/>';
+            }
+        }
+    </script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    
+    <body>
+        <div id="tbody">
+            <div >
+                <p>
+                    <label>请选择一个图片文件：</label><br /><br />
+                    <input type="file" id="file" class=" btn btn-default" style="height: 50px; width: 300px;text-align-last: 0;" />
+                    <br>
+                    <input type="button" value="读取图像" onclick="readAsDataURL()" class="btn btn-default" />
+                </p>
+            </div>
+            <div id="result" name="result" style=" border: 0px solid #000000;left: 5px;">图片显示区</div>
+        </div>
+</body>
+<script>
+document.getElementById("file").onchange = function(e){
+    console.log(e.target)
+
+}
+</script>
+</html> -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">    
+<html xmlns="http://www.w3.org/1999/xhtml">    
+<head>    
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />    
+<title>DrawRectangle</title>    
+    
+<style type="text/css">    
+  
+body {    
+margin-top: 0px;    
+margin-left: 0px;    
+}    
+div {    
+    margin:0;    
+    padding:0;    
+}    
+.innerbg {    
+    background:#ff0000;    
+    filter:Alpha(Opacity=40, FinishOpacity=90, Style=0, StartX=0, StartY=0, FinishX=100, FinishY=100);    
+    width:100%;    
+    height:100%;    
+}  
+  
+div.imgmasker {  
+    position: absolute;  
+    z-index: 1;  
+    cursor: pointer;  
+    border:1px solid red;  
+    background:#000000;  
+    opacity: 1;  
+}  
+
+</style>    
+<!-- <script language="javascript" type="text/javascript" src="arkjs/lang.js"></script>   -->
+<!-- <script language="javascript" type="text/javascript" src="DrawRectangle.js"></script>   -->
+<script>
+	DrawRectangle = function(id, onMouseUp, className){    
+      
+	  document.oncontextmenu=function() {    
+		 return true;    
+	  };  
+			
+	  this.IMG = document.getElementById(id);    
+		
+	  var masker = document.createElement("div");  
+	  masker.id = "mask_" + id;  
+	  var position = this.getAbsolutePosition(this.IMG);  
+		
+	  masker.style.width = position.width + "px";  
+	  masker.style.height = position.height + "px";  
+	  masker.style.left = position.left;  
+	  masker.style.top = position.top;  
+	  masker.style["background-image"] = "url("+this.IMG.src+")";  
+	  masker.className = "imgmasker";  
+	
+	  this.masker = masker;  
+	  this.IMG.parentNode.appendChild(masker);  
+	  this.IMG.parentNode.removeChild(this.IMG);  
+		
+	  this.isDraw = false;    
+	  this.isMouseUp = true;    
+	  this.index = 0;    
+	  this.currentDrawRectangle = null;    
+	  this.className = className;    
+		  
+	  this.RectangleDivs = [];    
+		  
+	  this.debug = false;    
+	  
+	  this._onMouseUp = onMouseUp;    
+		  
+	  this.bindListener();    
+  };  
+	  
+  DrawRectangle.prototype = {    
+	  bindListener: function(){    
+		  
+		  this.masker.onmousemove = this.dragSize.bind(this);    
+		  this.masker.onmouseup = this.onMouseUp.bind(this);    
+		  this.masker.onmouseout = this.onMouseOut.bind(this);    
+		  this.masker.onmouseover = this.onMouseOver.bind(this);    
+		  this.masker.onmousedown = this.drawLayer.bind(this);    
+		  this.masker.onmouseup = this.onMouseUp.bind(this);    
+	  },    
+	  drawLayer: function(){    
+		  //this.IMG.setCapture(true);    
+		  this.isDraw = true;    
+		  this.ismouseup = false;    
+		  this.index++;    
+			  
+		  var pos = this.getSourcePos();    
+			  
+		  var x = event.offsetX;     
+		  var y = event.offsetY;     
+	  
+		  var top = y + pos.top - 2;    
+		  var left = x + pos.left - 2;    
+			 
+		  var d = document.createElement("div");    
+		 // document.body.appendChild(d);  
+		  this.masker.appendChild(d);  
+		  d.style.border = "1px solid #ff0000";    
+		  d.style.width = 0;    
+		  d.style.height = 0;    
+		  d.style.overflow = "hidden";    
+		  d.style.position = "absolute";    
+		  d.style.left = left + "px";  
+		  d.style.top = top + "px";   
+		  d.style.opacity = 0.5;  
+		  d.style.background = "#ff0000";
+			
+		  d.style["z-index"] = 2;  
+		  if(this.className) {    
+			  d.className = this.className;    
+		  }    
+		  d.id = "draw" + this.index;    
+		  if (this.debug) {    
+			  d.innerHTML = "<div class='innerbg'>x:" + x + ",y:" + y + "..</div>";    
+		  }    
+			  
+		  this.currentDrawRectangle = d;    
+			  
+		  this.RectangleDivs[this.index] = {    
+			  left: left,    
+			  top: top,    
+			  el: d    
+		  };    
+	  },    
+	  getSourcePos: function(){    
+		  return this.getAbsolutePosition(this.masker);    
+	  },    
+	  dragSize: function(){    
+		  if (this.isDraw) {  
+			  if (!(event.srcElement.tagName.toLowerCase() == "div" && event.srcElement.className == "imgmasker"))     
+				  return;    
+				  
+			  var pos = this.getSourcePos();    
+			  var img_x = pos.top;     
+			  var img_y = pos.left;     
+			  var x = event.offsetX;    
+			  var y = event.offsetY;    
+			  var drawW = (x + img_x) - this.RectangleDivs[this.index].left;    
+			  var drawH = (y + img_y) - this.RectangleDivs[this.index].top;    
+			  this.currentDrawRectangle.style.width = (drawW > 0 ? drawW : -drawW) + "px";    
+			  this.currentDrawRectangle.style.height = (drawH > 0 ? drawH : -drawH) + "px";   
+			  if (drawW < 0) {    
+				  this.currentDrawRectangle.style.left = (x + img_x) + "px";     
+			  }    
+			  if (drawH < 0) {    
+				  this.currentDrawRectangle.style.top = (y + img_y) + "px";      
+			  }    
+				  
+			  if (this.debug) {    
+				  this.currentDrawRectangle.innerHTML = "<div class='innerbg'>x:" + x + ",y:" + y +    
+				  ". img_x:" +    
+				  img_x +    
+				  ",img_y:" +    
+				  img_y +    
+				  ". drawW:" +    
+				  drawW +    
+				  ",drawH:" +    
+				  drawH +    
+				  ".  Dleft[i]:" +    
+				  this.RectangleDivs[this.index].left +    
+				  ",Dtop[i]:" +    
+				 this.RectangleDivs[this.index].top +    
+				  "src:" +    
+				  event.srcElement.tagName +    
+				  ",this.isDraw: " + this.isDraw +  
+				  ",this.isMouseUp: " + this.isMouseUp +  
+				  ".</div>";    
+			  }    
+				  
+		  }    
+		  else {    
+			  return false;    
+		  }    
+	  },    
+		  
+	  stopDraw: function(){    
+		  this.isDraw = false;    
+	  },    
+		  
+	  onMouseOut: function(){    
+		  if (!this.isMouseUp) {    
+			  this.isDraw = false;    
+		  }    
+	  },    
+		  
+	  onMouseUp: function(){    
+		  this.isDraw = false;    
+		  this.isMouseUp = true;    
+		  //this.IMG.releaseCapture();    
+	  
+		  if(this._onMouseUp) {    
+			  this._onMouseUp.call(this, this.currentDrawRectangle);    
+		  }    
+	  },    
+		  
+	  onMouseOver: function(){    
+		  if (!this.isMouseUp) {    
+			  this.isDraw = true;    
+		  }    
+	  },    
+		  
+	  getAbsolutePosition: function(obj){    
+		  var t = obj.offsetTop;    
+		  var l = obj.offsetLeft;    
+		  var w = obj.offsetWidth;    
+		  var h = obj.offsetHeight;    
+			  
+		  while (obj = obj.offsetParent) {    
+			  t += obj.offsetTop;    
+			  l += obj.offsetLeft;    
+		  }    
+			  
+		  return {    
+			  top: t,    
+			  left: l,    
+			  width: w,    
+			  height: h    
+		  };  
+	  }    
+  };
+</script>  
+<script>    
+window.onload = function() {    
+    new DrawRectangle('bigimg', function(div){    
+        //alert(div.outerHTML);    
+    });    
+}  
+</script>    
+</head>    
+<body>    
+    <img src="http://soccer.gemfield.org:8080/static/images/1/20180612/09/boundary_420098_H169_sc.jpg" name="bigimg" border="0" id="bigimg" style="margin-left:0px;margin-top:0px;border:1px solid #ccc;"/>  
+</body> 
+   
+</html>    

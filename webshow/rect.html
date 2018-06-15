@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="gb2312" />
+<title></title>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<style type="text/css">
+.box {
+    background: #f00;
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    opacity: 0.5;
+    cursor: move;
+}
+.focus{
+    background: rgb(128, 255, 0);
+    opacity: 0.2;
+}
+</style>
+<script type="text/javascript">
+var init = {
+    // Mousing over the RESIZE_BORDER px-border around each rectangle
+    // initiates resize, else initiates move.
+    RESIZE_BORDER_EDGE: 5 /* px */,
+    RESIZE_BORDER_CORNER: 10 /* px */,
+
+    // Minimum dimensions allowed for box
+    MIN_RECT_DIMENSIONS: {
+        width: 10 /* px */,
+        height: 15 /* px */,
+    },
+    // Map of dragIntent => cursor
+    CURSOR_BY_DRAG_INTENT: {
+        'nw-resize': 'nwse-resize',
+        'se-resize': 'nwse-resize',
+        'sw-resize': 'nesw-resize',
+        'ne-resize': 'nesw-resize',
+        'n-resize': 'ns-resize',
+        's-resize': 'ns-resize',
+        'e-resize': 'ew-resize',
+        'w-resize': 'ew-resize',
+        'move': 'move',
+        'create': 'crosshair',
+    },
+};
+var Rectact = {dragIntent:undefined};
+
+function resize(ele,ex,ey,startX,startY){
+    if(ex > startX){
+        ele.style.width = ex - startX + 'px';
+    }else{
+        ele.style.left = ex+'px';
+        ele.style.width = startX - ex + 'px';
+    }
+    if(ey > startY){
+        ele.style.height = ey - startY + 'px';
+    }else{                
+        ele.style.top = ey+'px';
+        ele.style.height = startY - ey + 'px';
+    }
+}
+ 
+
+window.onload = function(e) {
+    e = e || window.event;
+    // startX, startY 为鼠标点击时初始坐标
+    // diffX, diffY 为鼠标初始坐标与 box 左上角坐标之差，用于拖动
+    var startX, startY, diffX, diffY;
+    var startl, startt, startr, startb;
+    // 是否拖动，初始为 false
+    var dragging = false;
+          
+    // 鼠标按下
+    document.getElementById("forimg").onmousedown = function(e) {
+        $(".box").removeClass("focus");
+        startX = e.pageX-$("#forimg").offset().left;
+        startY = e.pageY-$("#forimg").offset().top;
+        startl = e.target.offsetLeft;
+        startt = e.target.offsetTop;
+        startr = startl+e.target.offsetWidth;
+        startb = startt+e.target.offsetHeight;
+        // 如果鼠标在 box 上被按下
+        if(e.target.className.match(/box/)) {
+            console.log("init move box")
+            $(e.target).addClass("focus");
+            $(e.target).siblings().removeClass("focus");
+            // 允许拖动
+            dragging = true;
+          
+            // 设置当前 box 的 id 为 moving_box
+            if(document.getElementById("moving_box") !== null) {
+                document.getElementById("moving_box").removeAttribute("id");
+            }
+            e.target.id = "moving_box";
+          
+            // 计算坐标差值
+            diffX = startX - e.target.offsetLeft;
+            diffY = startY - e.target.offsetTop;
+        }
+        else if(e.target.id.match(/img/)){
+            // 在页面创建 box
+            console.log("create box")
+            var active_box = document.createElement("div");
+            active_box.id = "active_box";
+            active_box.className = "box focus";
+            active_box.style.top = startY + 'px';
+            active_box.style.left = startX + 'px';
+            // document.body.appendChild(active_box);
+            $("#forimg").append(active_box)
+            active_box = null;
+        }
+    };
+    
+    // 鼠标移动
+    document.getElementById("forimg").onmousemove = function(e) {
+
+        if(e.target.className.match(/box/)) {
+                var relative = {
+                    xMin: e.pageX-$("#forimg").offset().left - e.target.offsetLeft,
+                    yMin: e.pageY-$("#forimg").offset().top - e.target.offsetTop,
+                    xMax: e.target.offsetLeft+e.target.offsetWidth - (e.pageX-$("#forimg").offset().left),
+                    yMax: e.target.offsetTop+e.target.offsetHeight - (e.pageY-$("#forimg").offset().top),
+                };
+            if(e.target.style.cursor && dragging){
+                console.log("----=-=-"+e.target.style.cursor)
+            }else{
+
+                if (relative.xMin > init.RESIZE_BORDER_EDGE && relative.xMax > init.RESIZE_BORDER_EDGE &&
+                    relative.yMin > init.RESIZE_BORDER_EDGE && relative.yMax > init.RESIZE_BORDER_EDGE) {
+                    Rectact.dragIntent = 'move';
+                }
+                else if (relative.yMin < init.RESIZE_BORDER_CORNER) {
+                    if (relative.xMin < init.RESIZE_BORDER_CORNER)
+                        Rectact.dragIntent = 'nw-resize';
+                    else if (relative.xMax < init.RESIZE_BORDER_CORNER)
+                        Rectact.dragIntent = 'ne-resize';
+                    else
+                        Rectact.dragIntent = 'n-resize';
+                }
+                else if (relative.yMax < init.RESIZE_BORDER_CORNER) {
+                    if (relative.xMin < init.RESIZE_BORDER_CORNER)
+                        Rectact.dragIntent = 'sw-resize';
+                    else if (relative.xMax < init.RESIZE_BORDER_CORNER)
+                        Rectact.dragIntent = 'se-resize';
+                    else
+                        Rectact.dragIntent = 's-resize';
+                }
+                else {
+                    if (relative.xMin < init.RESIZE_BORDER_CORNER)
+                        Rectact.dragIntent = 'w-resize';
+                    else if (relative.xMax < init.RESIZE_BORDER_CORNER)
+                        Rectact.dragIntent = 'e-resize';
+                    else
+                        throw new Error('Rect.onMouseover: internal error');
+                }
+                e.target.style.cursor=Rectact.dragIntent;
+            }
+        }
+            
+            // 更新 box 尺寸
+            if(document.getElementById("active_box") !== null) {
+                var ab = document.getElementById("active_box");
+                resize(ab,e.pageX-$("#forimg").offset().left,e.pageY-$("#forimg").offset().top,startX,startY)
+            }
+            
+            // 移动，更新 box 坐标
+            if(document.getElementById("moving_box") !== null && dragging) {
+
+            switch (Rectact.dragIntent) {
+                case 'nw-resize':
+                    resize(document.getElementById("moving_box"),e.pageX-$("#forimg").offset().left,e.pageY-$("#forimg").offset().top,startr,startb);
+                    break;
+                case 'ne-resize':
+                    resize(document.getElementById("moving_box"),e.pageX-$("#forimg").offset().left,e.pageY-$("#forimg").offset().top,startl,startb);
+                    break;
+                case 'n-resize':
+                    resize(document.getElementById("moving_box"),startl,e.pageY-$("#forimg").offset().top,startr,startb);
+                    break;
+                case 'sw-resize':
+                    resize(document.getElementById("moving_box"),e.pageX-$("#forimg").offset().left,e.pageY-$("#forimg").offset().top,startr,startt);
+                    break;
+                case 'se-resize':
+                    resize(document.getElementById("moving_box"),e.pageX-$("#forimg").offset().left,e.pageY-$("#forimg").offset().top,startl,startt);
+                    break;
+                case 's-resize':
+                    resize(document.getElementById("moving_box"),startl,e.pageY-$("#forimg").offset().top,startr,startt);
+                    break;
+                case 'w-resize':
+                    resize(document.getElementById("moving_box"),e.pageX-$("#forimg").offset().left,startt,startr,startb);
+                    break;
+                case 'e-resize':
+                    resize(document.getElementById("moving_box"),e.pageX-$("#forimg").offset().left,startt,startl,startb);
+                    break;
+                case 'move':
+                    var mb = document.getElementById("moving_box");
+                    mb.style.top = e.pageY-$("#forimg").offset().top - diffY + 'px';
+                    mb.style.left = e.pageX-$("#forimg").offset().left - diffX + 'px';
+                    break;
+    
+            }
+
+        }
+    } 
+           
+    // 鼠标抬起
+    document.getElementById("forimg").onmouseup = function(e) {
+        console.log("onmouseup"+e)
+        // 禁止拖动
+        dragging = false;
+        e.target.style.cursor = null;
+        if(document.getElementById("active_box") !== null) {
+            var ab = document.getElementById("active_box");
+            ab.removeAttribute("id");
+            // 如果长宽均小于 3px，移除 box
+            if(ab.offsetWidth < 4 || ab.offsetHeight < 4) {
+                document.getElementById("forimg").removeChild(ab);
+            }
+        }
+    };
+    document.onkeydown=function(event){
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        console.log(e.keyCode)
+        if(e.keyCode == 8||e.keyCode == 46 || e.keyCode ==68){
+            $(".focus")[0].remove();
+        }
+    }
+};
+</script>
+</head>
+<body>
+<p>点击鼠标左键并拖动绘制矩形</p>
+<div id="tbody" style="margin:30px auto;">
+    <div >
+        <p>
+            <label>请选择一个图片文件：</label><br /><br />
+            <div id="file-uploader-btn" class="upload-img">
+                <input type="file" name="imagefile" id="imagefile">
+                <i class="icons icon-upload"></i><span>本地上传</span>
+            </div>            <br>
+            <input type="button" value="读取图像" onclick="readAsDataURL()" class="btn btn-default" />
+        </p>
+    </div>
+    <div id="forimg" name="result" style="position:relative;border: 0px solid #000000;left: 5px;">图片显示区</div>
+</div>
+<script>
+        var result = document.getElementById("forimg");
+        var file = document.getElementById("file");
+    
+        //判断浏览器是否支持FileReader接口  
+        if(typeof FileReader == 'undefined')  {
+            result.InnerHTML = "<p>你的浏览器不支持FileReader接口！</p>";
+            //使选择控件不可操作  
+            file.setAttribute("disabled", "disabled"); //使得之前操作失效，重新启动
+        }
+    
+        function readAsDataURL() {
+            //检验是否为图像文件  
+            var file = document.getElementById("imagefile").files[0];
+            if(!/image\/\w+/.test(file.type)) {
+                alert("这不是图片文件！请检查！");
+                return false;
+            }
+            var reader = new FileReader();
+            //将文件以Data URL形式读入页面  
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                var result = document.getElementById("forimg");
+                //显示文件  
+                result.innerHTML = '<img id="img" ondragstart="return false" src="' + this.result + '"  width="100%" alt=""/>';
+            }
+        }
+</script>
+</body>
+</html>
